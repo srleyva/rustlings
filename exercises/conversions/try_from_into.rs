@@ -11,7 +11,20 @@ struct Color {
     blue: u8,
 }
 
-// I AM NOT DONE
+impl Color {
+    fn color_in_range(colors: &[i16; 3]) -> bool {
+        return colors.into_iter().filter(|&x| *x > 255 || *x < 0).collect::<Vec<&i16>>().is_empty();
+    }
+}
+
+#[test]
+fn test_colors_in_range() {
+    let colors: [i16; 3] = [122, 4, 200];
+    assert_eq!(Color::color_in_range(&colors), true);
+
+    let colors: [i16; 3] = [261, 7, 9];
+    assert_eq!(Color::color_in_range(&colors), false);
+}
 
 // Your task is to complete this implementation
 // and return an Ok result of inner type Color.
@@ -26,6 +39,7 @@ struct Color {
 impl TryFrom<(i16, i16, i16)> for Color {
     type Error = String;
     fn try_from(tuple: (i16, i16, i16)) -> Result<Self, Self::Error> {
+        Color::try_from([tuple.0, tuple.1, tuple.2])
     }
 }
 
@@ -33,6 +47,15 @@ impl TryFrom<(i16, i16, i16)> for Color {
 impl TryFrom<[i16; 3]> for Color {
     type Error = String;
     fn try_from(arr: [i16; 3]) -> Result<Self, Self::Error> {
+        return if !Color::color_in_range(&arr) {
+            Err("Color not in valid range".to_string())
+        } else {
+            Ok(Color{
+                red: arr[0] as u8,
+                green: arr[1] as u8,
+                blue: arr[2] as u8,
+            })
+        }
     }
 }
 
@@ -40,6 +63,10 @@ impl TryFrom<[i16; 3]> for Color {
 impl TryFrom<&[i16]> for Color {
     type Error = String;
     fn try_from(slice: &[i16]) -> Result<Self, Self::Error> {
+        if slice.len() != 3 {
+            return Err(String::from("Invalid option provided, should be [R,G,B]"))
+        }
+        Color::try_from([slice[0], slice[1], slice[2]])
     }
 }
 

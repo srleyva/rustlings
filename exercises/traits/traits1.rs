@@ -8,14 +8,24 @@
 // which appends "Bar" to any object
 // implementing this trait.
 
-// I AM NOT DONE
+trait ReverseString {
+    fn reverse(self) -> Self;
+}
 
 trait AppendBar {
     fn append_bar(self) -> Self;
 }
 
+impl ReverseString for String {
+    fn reverse(self) -> String {
+        self.chars().rev().collect()
+    }
+}
+
 impl AppendBar for String {
-    //Add your code here
+    fn append_bar(self) -> String {
+        format!("{}Bar", self)
+    }
 }
 
 fn main() {
@@ -39,5 +49,10 @@ mod tests {
             String::from("").append_bar().append_bar(),
             String::from("BarBar")
         );
+    }
+
+    #[test]
+    fn is_reverse() {
+        assert_eq!(String::from("hello").reverse(), String::from("olleh"));
     }
 }
